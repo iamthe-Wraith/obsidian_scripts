@@ -43,6 +43,17 @@ const init = async function(tp, app) {
     await app.vault.adapter.fs.rm(await tp.file.path());
   }
 
+  if (tp.file.title === 'todo') {
+    tp.file.create_new(
+      tp.file.find_tfile('todo-template'),
+      'new_idea',
+      true,
+      tp.file.folder(),
+    )
+
+    await app.vault.adapter.fs.rm(await tp.file.path());
+  }
+
   return '';
 }
 

@@ -43,10 +43,10 @@ const init = async function(tp, app) {
     await app.vault.adapter.fs.rm(await tp.file.path());
   }
 
-  if (tp.file.title === 'todo') {
+  if (tp.file.title === 'in') {
     tp.file.create_new(
-      tp.file.find_tfile('todo-template'),
-      'new_idea',
+      tp.file.find_tfile('in-template'),
+      'Untitled In File',
       true,
       tp.file.folder(),
     )

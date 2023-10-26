@@ -1,60 +1,54 @@
+/**
+ * docs: https://silentvoid13.github.io/Templater/introduction.html
+ */
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const removeFile = async (tp, app, path) => {
+  await app.vault.adapter.fs.rm(path);
+
+  while(await tp.file.exists(path)) {
+    await sleep(50);
+  }
+}
+
+const createNewFile = async (tp, app, template, name, path) => {
+  await removeFile(tp, app, await tp.file.path());
+
+  setTimeout(() => {
+    tp.file.create_new(
+      tp.file.find_tfile(template),
+      name,
+      true,
+      app.vault.getAbstractFileByPath(path)
+    );
+  }, 1000);
+}
+
 const init = async function(tp, app) {
-  if (tp.file.title === 'idea') {
-    tp.file.create_new(
-      tp.file.find_tfile('idea-template'),
-      'new_idea',
-      true,
-      app.vault.getAbstractFileByPath('ideas')
-    )
+  let [prefix, name] = tp.file.title.split('-');
+  prefix = (prefix || '').toLowerCase().trim();
+  name = (name || '').trim();
 
-    await app.vault.adapter.fs.rm(await tp.file.path());
+  if (prefix === 'computer') {
+    await createNewFile(tp, app, 'in-template', name, 'next-actions/at-computer');
+  } else if (prefix === 'errand') {
+    await createNewFile(tp, app, 'in-template', name, 'next-actions/errands');
+  } else if (prefix === 'house') {
+    await createNewFile(tp, app, 'in-template', name, 'next-actions/at-house');
+  } else if (prefix === 'phone') {
+    await createNewFile(tp, app, 'in-template', name, 'next-actions/phone-calls');
+  } else if (prefix === 'project') {
+    await createNewFile(tp, app, 'in-template', name, 'next-actions/projects');
+  } else if (prefix === 'wait' || prefix === 'waiting') {
+    await createNewFile(tp, app, 'in-template', name, 'waiting-for');
+  } else if (prefix === 'work') {
+    await createNewFile(tp, app, 'in-template', name, 'next-actions/at-work');
+  } else {
+    await createNewFile(tp, app, 'in-template', tp.file.title, '/');
   }
 
-  if (tp.file.title === 'meeting') {
-    tp.file.create_new(
-      tp.file.find_tfile('meeting-template'),
-      'new_meeting',
-      true,
-      app.vault.getAbstractFileByPath('meetings')
-    )
-
-    await app.vault.adapter.fs.rm(await tp.file.path());
-  }
-
-  if (tp.file.title === 'slip') {
-    tp.file.create_new(
-      tp.file.find_tfile('slip-item'),
-      'new_slip',
-      true,
-      app.vault.getAbstractFileByPath('slips')
-    )
-
-    await app.vault.adapter.fs.rm(await tp.file.path());
-  }
-
-  if (tp.file.title === 'thought') {
-    tp.file.create_new(
-      tp.file.find_tfile('thought-template'),
-      'new_thought',
-      true,
-      app.vault.getAbstractFileByPath('thoughts')
-    )
-
-    await app.vault.adapter.fs.rm(await tp.file.path());
-  }
-
-  if (tp.file.title === 'in') {
-    tp.file.create_new(
-      tp.file.find_tfile('in-template'),
-      'Untitled In File',
-      true,
-      tp.file.folder(),
-    )
-
-    await app.vault.adapter.fs.rm(await tp.file.path());
-  }
-
-  return '';
+  return ''
 }
 
 module.exports = init;
